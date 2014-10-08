@@ -26,8 +26,7 @@ typedef struct _method_block_header {
 
 typedef void (*method_entry) (char* , char* );
 
-// TODO:
-// void create_method_block(char* , size_t* , method_entry* , size_t , unsigned char , unsigned char );
+void create_method_block(char* , size_t* , method_entry* , size_t , unsigned char , unsigned char );
 
 void* get_method_entries(char* , size_t , method_entry* , size_t* );
 

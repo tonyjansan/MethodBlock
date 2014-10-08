@@ -27,6 +27,8 @@ void create_method_block(char* data, size_t* length, method_entry* methods, size
 
     method_block_header* pmbh = (method_block_header*)data;
     pmbh->header_length = sizeof(method_block_header) + (count * sizeof(unsigned short));
+    pentry = data + pmbh->header_length;
+
     pmbh->key = key;
     pmbh->compress_type = compress_type;
 #ifndef CROSS_COMPILE
@@ -34,19 +36,22 @@ void create_method_block(char* data, size_t* length, method_entry* methods, size
 #else
     pmbh->instruction_type = 0x02;
 #endif
+    pmbh->data_length = 0;
+    for(; i <= count; i++)
+        pmbh->offsets[i] = (size_t)methods[i] - (size_t)methods[0];
 
     buffer = (char*)malloc(PAGE_SIZE);
-    *length = pmbh->header_length;
-    for(; i < count; i++) {
-        pmbh->offsets[i] = (size_t)methods[i] - (size_t)methods[0];
-        *length += pmbh->offsets[i + 1] - pmbh->offsets[i];
+    for(i = 0; i < count; i++) {
+        pmbh->data_length += pmbh->offsets[i + 1] - pmbh->offsets[i];
         memcpy(buffer + pmbh->offsets[i], methods[i], pmbh->offsets[i + 1] - pmbh->offsets[i]);
     }
 
-    // TODO
-    if (compress_type == 0x01) { // lzss
-    }
+    *length = pmbh->header_length;
+    if (compress_type == 0x01) // lzss
+        *length += lzss_encode((unsigned char*)buffer, pmbh->data_length, (unsigned char*)pentry, PAGE_SIZE);
     else {
+        *length += pmbh->data_length;
+        memcpy(pentry, buffer, pmbh->data_length);
     }
 
     // Encrypt if having a key
@@ -58,8 +63,10 @@ void* get_method_entries(char* data, size_t length, method_entry* methods, size_
 {
     method_block_header* pmbh = (method_block_header*)data;
     char *buffer, *pentry = data + pmbh->header_length;
-    int fd;
     size_t i = (pmbh->header_length - sizeof(method_block_header)) / sizeof(unsigned short);
+#ifdef unix
+    int fd;
+#endif
 
     // decrypt first if having a key
     if (pmbh->key) {
