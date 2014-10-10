@@ -5,7 +5,6 @@
 #else
 #include <stdlib.h>
 #include <string.h>
-#define PAGE_SIZE 4096
 #endif // unix
 
 #include "methodblock.h"
@@ -40,7 +39,7 @@ void create_method_block(char* data, size_t* length, method_entry* methods, size
     for(; i <= count; i++)
         pmbh->offsets[i] = (size_t)methods[i] - (size_t)methods[0];
 
-    buffer = (char*)malloc(PAGE_SIZE);
+    buffer = (char*)malloc(BLOCK_MAXSIZE);
     for(i = 0; i < count; i++) {
         pmbh->data_length += pmbh->offsets[i + 1] - pmbh->offsets[i];
         memcpy(buffer + pmbh->offsets[i], methods[i], pmbh->offsets[i + 1] - pmbh->offsets[i]);
@@ -48,7 +47,7 @@ void create_method_block(char* data, size_t* length, method_entry* methods, size
 
     *length = pmbh->header_length;
     if (compress_type == 0x01) // lzss
-        *length += lzss_encode((unsigned char*)buffer, pmbh->data_length, (unsigned char*)pentry, PAGE_SIZE);
+        *length += lzss_encode((unsigned char*)buffer, pmbh->data_length, (unsigned char*)pentry, BLOCK_MAXSIZE);
     else {
         *length += pmbh->data_length;
         memcpy(pentry, buffer, pmbh->data_length);
@@ -79,10 +78,10 @@ void* get_method_entries(char* data, size_t length, method_entry* methods, size_
     fd = open("/dev/zero", 0);
     if (fd == -1)
         return 0;
-    buffer = mmap(0, PAGE_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE, fd, 0);
+    buffer = mmap(0, BLOCK_MAXSIZE, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE, fd, 0);
     close(fd);
 #else
-    buffer = (char*)malloc(PAGE_SIZE);
+    buffer = (char*)malloc(BLOCK_MAXSIZE);
 #endif // unix
     if (!buffer) return 0;
 
@@ -105,7 +104,7 @@ void* get_method_entries(char* data, size_t length, method_entry* methods, size_
 void release_method_block(void* p)
 {
 #ifdef unix
-    munmap(p, PAGE_SIZE);
+    munmap(p, BLOCK_MAXSIZE);
 #else
     free(p);
 #endif // unix

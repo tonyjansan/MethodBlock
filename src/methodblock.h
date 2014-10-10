@@ -14,6 +14,14 @@
 #define METHOD_END_FLAG   __method_end
 #define METHOD_EXPORT_END void METHOD_END_FLAG(char* k, char* v){}
 
+#ifndef BLOCK_MAXSIZE
+#ifndef PAGE_SIZE
+#define BLOCK_MAXSIZE 4096
+#else
+#define BLOCK_MAXSIZE PAGE_SIZE
+#endif  // PAGE_SIZE
+#endif  // BLOCK_MAXSIZE
+
 typedef struct _method_block_header {
     unsigned short header_length;
     unsigned char key;
