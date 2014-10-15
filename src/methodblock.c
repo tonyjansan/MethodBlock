@@ -88,7 +88,7 @@ void* get_method_entries(char* data, size_t length, method_entry* methods, size_
     // copy method shell-codes
     if (pmbh->compress_type) {
         length = lzss_decode((unsigned char*)pentry, length - pmbh->header_length, (unsigned char*)buffer, pmbh->data_length);
-        if (length != pmbh->data_length); // Decompress Exception!
+        if (length != pmbh->data_length) {} // Decompress Exception!
     }
     else
         memcpy(buffer, pentry, length);

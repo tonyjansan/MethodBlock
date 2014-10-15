@@ -12,7 +12,7 @@
 
 #define METHOD_EXPORT_START
 #define METHOD_END_FLAG   __method_end
-#define METHOD_EXPORT_END void METHOD_END_FLAG(char* k, char* v){}
+#define METHOD_EXPORT_END METHOD_EXPORT_API void __method_end(char* data, char* key){}
 
 #ifndef BLOCK_MAXSIZE
 #ifndef PAGE_SIZE

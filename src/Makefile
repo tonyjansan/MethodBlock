@@ -1,7 +1,11 @@
 # Makefile for methodblock (x86)
 
 CC := gcc
-CFLAGS := -O2 -Wall
+CFLAGS := -Wall
+#CFLAGS += -O2
+CFLAGS += -fdefer-pop -fguess-branch-probability -fcprop-registers -floop-optimize\
+          -fif-conversion -fif-conversion2 -ftree-ccp -ftree-dce -ftree-dominator-opts\
+		  -ftree-dse -ftree-ter -ftree-lrs -ftree-sra -ftree-copyrename -fmerge-constants
 
 TEST_X86 := methodblock
 OBJS := main_x86.o methodblock.o lzss.o

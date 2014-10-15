@@ -102,9 +102,11 @@ void safe_mode_buffer_transfer(char* data, int length, char key) {
 int main() {
     int i;
     char data[] = "Hello World! Chicken!", key = 0x7F, _key = 0x7F;
+    method_entry methods[3] = {strongEncode, strongDecode, METHOD_END_FLAG};
+    //printf("MethodBlock Size: %d\n\n", (size_t)methods[2] - (size_t)methods[0]);
+
     printf("Data: %s\n", data);
     //safe_mode_buffer_transfer(data, strlen(data), 0x7F);
-    printf("Function Size: %d\n\n", (size_t)&strongDecode - (size_t)&strongEncode);
 
     for(i = 0; i < strlen(data); i++)
         strongEncode(data + i, &key);
@@ -112,5 +114,6 @@ int main() {
     for(i = 0; i < strlen(data); i++)
         strongDecode(data + i, &_key);
     printf("Decode: %s\n", data);
+    printf("MethodBlock Size: %d\n\n", (size_t)methods[2] - (size_t)methods[0]);
     return 0;
 }
