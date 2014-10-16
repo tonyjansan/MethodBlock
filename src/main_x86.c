@@ -64,7 +64,7 @@ void safe_mode_buffer_transfer(char* data, int length, char key) {
 
 int main() {
     size_t l = BLOCK_MAXSIZE, count = 3;
-    char data[] = "Hello World! Chicken!", block[BLOCK_MAXSIZE], key = 0x7F, _key = 0x7F;
+    char data[] = "Hello World! Chicken! Come On!", block[BLOCK_MAXSIZE], key = 0x7F, _key = 0x7F;
     void* hblock = 0; FILE* fp = 0;
 
     method_entry methods[3] = {strongEncode, strongDecode, METHOD_END_FLAG};
