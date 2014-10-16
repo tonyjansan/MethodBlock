@@ -1,9 +1,10 @@
 # Makefile for methodblock (x86)
 
 CC := gcc
-CFLAGS := -Wall
-#CFLAGS += -O2    except -freorder-functions
-CFLAGS += -fdefer-pop -fguess-branch-probability -fcprop-registers -floop-optimize\
+# CFLAGS += -O2    except -freorder-functions
+# Without -g
+# CFLAGS += -fomit-frame-pointer
+CFLAGS += -Wall -fdefer-pop -fguess-branch-probability -fcprop-registers -floop-optimize\
           -fif-conversion -fif-conversion2 -ftree-ccp -ftree-dce -ftree-dominator-opts\
           -ftree-dse -ftree-ter -ftree-lrs -ftree-sra -ftree-copyrename -ftree-fre\
           -ftree-ch -funit-at-a-time -fmerge-constants -fthread-jumps -fcrossjumping\
