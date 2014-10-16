@@ -100,20 +100,26 @@ void safe_mode_buffer_transfer(char* data, int length, char key) {
 }
 
 int main() {
-    int i;
-    char data[] = "Hello World! Chicken!", key = 0x7F, _key = 0x7F;
+    size_t l = BLOCK_MAXSIZE, count = 3;
+    char data[] = "Hello World! Chicken!", block[BLOCK_MAXSIZE], key = 0x7F, _key = 0x7F;
+    void* hblock = 0;
+
     method_entry methods[3] = {strongEncode, strongDecode, METHOD_END_FLAG};
-    //printf("MethodBlock Size: %d\n\n", (size_t)methods[2] - (size_t)methods[0]);
+    printf("MethodBlock Original Size: %u\n", (size_t)methods[count - 1] - (size_t)methods[0]);
+    create_method_block(block, &l, methods, count - 1, 0x3F, 1);
+    printf("MethodBlock Output Size: %u\n\n", l);
 
-    printf("Data: %s\n", data);
-    //safe_mode_buffer_transfer(data, strlen(data), 0x7F);
-
-    for(i = 0; i < strlen(data); i++)
-        strongEncode(data + i, &key);
-    printf("Encode: %s\n", data);
-    for(i = 0; i < strlen(data); i++)
-        strongDecode(data + i, &_key);
-    printf("Decode: %s\n", data);
-    printf("MethodBlock Size: %d\n\n", (size_t)methods[2] - (size_t)methods[0]);
+    hblock = get_method_entries(block, l, methods, &count);
+    if (hblock) {
+        printf("Data: %s\n", data);
+        //safe_mode_buffer_transfer(data, strlen(data), 0x7F);
+        for(l = 0; l < strlen(data); l++)
+            (*methods[0])(data + l, &key);
+        printf("Encode: %s\n", data);
+		for(l = 0; l < strlen(data); l++)
+            (*methods[1])(data + l, &_key);
+        printf("Decode: %s\n", data);
+        release_method_block(hblock);
+    }
     return 0;
 }
