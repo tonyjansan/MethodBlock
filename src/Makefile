@@ -1,18 +1,9 @@
 # Makefile for methodblock (x86)
 
 CC := gcc
-# CFLAGS += -O2    except -freorder-functions
+CFLAGS += -O2 -Wall -fno-reorder-functions
 # Without -g
 # CFLAGS += -fomit-frame-pointer
-CFLAGS += -Wall -fdefer-pop -fguess-branch-probability -fcprop-registers -floop-optimize\
-          -fif-conversion -fif-conversion2 -ftree-ccp -ftree-dce -ftree-dominator-opts\
-          -ftree-dse -ftree-ter -ftree-lrs -ftree-sra -ftree-copyrename -ftree-fre\
-          -ftree-ch -funit-at-a-time -fmerge-constants -fthread-jumps -fcrossjumping\
-          -foptimize-sibling-calls -fcse-follow-jumps -fcse-skip-blocks -fgcse -fgcse-lm\
-          -fexpensive-optimizations -fstrength-reduce -frerun-cse-after-loop -fpeephole2\
-          -fcaller-saves -fschedule-insns -fschedule-insns2 -fsched-interblock -fsched-spec\
-          -fregmove -fstrict-aliasing -fdelete-null-pointer-checks -freorder-blocks\
-          -falign-functions -falign-jumps -falign-loops -falign-labels -ftree-vrp -ftree-pre
 
 TEST_X86 := methodblock
 OBJS := main_x86.o methodblock.o lzss.o
