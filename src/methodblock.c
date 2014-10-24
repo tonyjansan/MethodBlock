@@ -21,7 +21,7 @@ char* buffer_transform(char* data, size_t length, char key)
 void create_method_block(char* data, size_t* length, method_entry* methods, size_t count,
     unsigned char key, unsigned char compress_type)
 {
-    char *buffer, *pentry;
+    char buffer[BLOCK_MAXSIZE], *pentry;
     size_t i = 0;
 
     method_block_header* pmbh = (method_block_header*)data;
@@ -39,7 +39,6 @@ void create_method_block(char* data, size_t* length, method_entry* methods, size
     for(; i <= count; i++)
         pmbh->offsets[i] = (size_t)methods[i] - (size_t)methods[0];
 
-    buffer = (char*)malloc(BLOCK_MAXSIZE);
     for(i = 0; i < count; i++) {
         pmbh->data_length += pmbh->offsets[i + 1] - pmbh->offsets[i];
         memcpy(buffer + pmbh->offsets[i], methods[i], pmbh->offsets[i + 1] - pmbh->offsets[i]);
@@ -86,7 +85,7 @@ void* get_method_entries(char* data, size_t length, method_entry* methods, size_
     if (!buffer) return 0;
 
     // copy method shell-codes
-    if (pmbh->compress_type) {
+    if (pmbh->compress_type == 0x01) { // lzss
         length = lzss_decode((unsigned char*)pentry, length - pmbh->header_length, (unsigned char*)buffer, pmbh->data_length);
         if (length != pmbh->data_length) {} // Decompress Exception!
     }
