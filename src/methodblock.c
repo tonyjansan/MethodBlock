@@ -1,10 +1,10 @@
+#include <string.h>
 #ifdef unix
 #include <sys/mman.h>
 #include <unistd.h>
 #include <fcntl.h>
-#else
+#else // others
 #include <stdlib.h>
-#include <string.h>
 #endif // unix
 
 #include "methodblock.h"
