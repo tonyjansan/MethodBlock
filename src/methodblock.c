@@ -14,7 +14,7 @@ char* buffer_transform(char* data, size_t length, char key)
 {
     size_t i = 0;
     for(; i < length; i++)
-        data[length] ^= key;
+        data[i] ^= key;
     return data;
 }
 
